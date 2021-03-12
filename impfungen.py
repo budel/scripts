@@ -10,7 +10,7 @@ headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleW
 xlsxf = "impfungen.xlsx"
 dirData = "/sdcard/Download/"
 
-if False:
+if True:
     if os.path.exists(dirData+xlsxf):
         os.remove(dirData+xlsxf)
     response = requests.get(url, headers=headers)
