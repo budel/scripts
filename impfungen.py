@@ -43,19 +43,21 @@ maxpop = int(2*832e5)
 population = range(1,maxpop,100000) 
 daypop = lambda p : (math.sqrt(2*a*p+b**2)-b) / a
 dayof70p = daypop(0.7*maxpop)
+dateof70p = df['Datum'][0] + datetime.timedelta(dayof70p)
 print('noch', dayof70p-len(df), 'Tage bis 70% zweimal geimpft sind')
-print('Also am', df['Datum'][0] + datetime.timedelta(dayof70p))
+print('Also am', dateof70p)
 
 maxdays = int(daypop(maxpop))+1
 cumimpf = [0.5*a*x**2+b*x for x in range(maxdays)] 
+dates = [df['Datum'][0] + datetime.timedelta(i) for i in range(maxdays)]
 print(dayof70p)
 fig2, ax = plt.subplots()
-ax.plot(range(maxdays), cumimpf)
+ax.plot(dates, cumimpf)
 ax.grid(True)
 ax.set_ylim(bottom=0)
-ax.set_xlim(left=0)
+ax.set_xlim(left=df['Datum'][0])
 ax.set_ylabel('verabreichte Impfungen')
 ax.set_xlabel('Tage')
-ax.annotate('70%', xy=(dayof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='offset points', arrowprops=dict(facecolor='black', shrink=0.05))
+ax.annotate('70%', xy=(dateof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='offset points', arrowprops=dict(facecolor='black', shrink=0.05))
 fig2.savefig(dirData+"tage_pro_impfung.png", bbox_inches = 'tight')
 
