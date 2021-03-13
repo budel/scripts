@@ -9,6 +9,7 @@ url = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfqu
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 xlsxf = "impfungen.xlsx"
 dirData = "/sdcard/Download/"
+popGroups = [8600000, 13800000, 14900000]
 
 if True:
     if os.path.exists(dirData+xlsxf):
@@ -59,6 +60,15 @@ ax.set_ylim(bottom=0)
 ax.set_xlim(left=df['Datum'][0])
 ax.set_ylabel('verabreichte Impfungen')
 ax.set_xlabel('Tage')
-ax.annotate('70%', xy=(dateof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='offset points', arrowprops=dict(facecolor='black', shrink=0.05))
+ax.annotate('70%', xy=(dateof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='offset points', arrowprops=dict(facecolor='black'))
+
+cumpop = 0
+for i, pop in enumerate(popGroups):
+    cumpop += pop
+    txt = f'Gruppe {i+1}'
+    x = df['Datum'][0] + datetime.timedelta(daypop(cumpop*2))
+    y = cumpop*2
+    ax.annotate(txt, xy=(x, y), xytext=(-25, 25), textcoords='offset points', arrowprops=dict(facecolor='black'))
+
 fig2.savefig(dirData+"tage_pro_impfung.png", bbox_inches = 'tight')
 
