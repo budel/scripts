@@ -2,8 +2,13 @@ import requests
 import os, math
 import datetime
 import pandas as pd
-import matplotlib.pyplot as plt
 import statsmodels.api as sm
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib.units as munits
+converter = mdates.ConciseDateConverter()
+munits.registry[datetime.date] = converter
+munits.registry[datetime.datetime] = converter
 
 url = "https://www.rki.de/DE/Content/InfAZ/N/Neuartiges_Coronavirus/Daten/Impfquotenmonitoring.xlsx?__blob=publicationFile"
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
@@ -56,8 +61,8 @@ print(dayof70p)
 fig2, ax = plt.subplots()
 ax.plot(dates, cumimpf)
 ax.grid(True)
-ax.set_ylim(bottom=0)
-ax.set_xlim(left=df['Datum'][0])
+ax.set_ylim(bottom=0, top=maxpop)
+ax.set_xlim(left=dates[0], right=dates[-1])
 ax.set_ylabel('verabreichte Impfungen')
 ax.set_xlabel('Tage')
 ax.annotate('70%', xy=(dateof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='offset points', arrowprops=dict(facecolor='black'))
