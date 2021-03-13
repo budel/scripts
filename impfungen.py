@@ -20,7 +20,8 @@ if True:
 
 df = pd.ExcelFile(dirData+xlsxf, engine='openpyxl') 
 df = pd.read_excel(df, usecols=['Datum', 'Erstimpfung', 'Zweitimpfung', 'Gesamtzahl verabreichter Impfstoffdosen'], sheet_name='Impfungen_proTag')
-df = df[:len(df)-4]
+df = df[:len(df)-2]
+df = df.dropna()
 df = df.rename(columns={'Gesamtzahl verabreichter Impfstoffdosen':'Gesamt'})
 df.insert(0, 'Days', range(1, len(df)+1))
 print(df.tail())
