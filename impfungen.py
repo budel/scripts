@@ -16,7 +16,7 @@ xlsxf = "impfungen.xlsx"
 dirData = "/sdcard/Download/"
 popGroups = [8600000, 13800000, 14900000]
 
-if False:
+if True:
     if os.path.exists(dirData+xlsxf):
         os.remove(dirData+xlsxf)
     response = requests.get(url, headers=headers)
@@ -60,6 +60,7 @@ dates = [df['Datum'][0] + datetime.timedelta(i) for i in range(maxdays)]
 print(dayof70p)
 fig2, ax = plt.subplots()
 ax.plot(dates, cumimpf)
+ax.scatter(x=dates[:len(df)], y=df['cumsum'])
 ax.grid(True)
 ax.set_ylim(bottom=0, top=maxpop)
 ax.set_xlim(left=dates[0], right=dates[-1])
