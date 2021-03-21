@@ -16,7 +16,7 @@ xlsxf = "impfungen.xlsx"
 dirData = "/sdcard/Download/"
 popGroups = [8600000, 13800000, 14900000]
 
-if True:
+if False:
     if os.path.exists(dirData+xlsxf):
         os.remove(dirData+xlsxf)
     response = requests.get(url, headers=headers)
@@ -26,10 +26,10 @@ if True:
 
 df = pd.ExcelFile(dirData+xlsxf, engine='openpyxl') 
 df = pd.read_excel(df, usecols=['Datum', 'Erstimpfung', 'Zweitimpfung', 'Gesamtzahl verabreichter Impfstoffdosen'], sheet_name='Impfungen_proTag')
-df = df[:len(df)-2]
-df = df.dropna()
+df = df[df['Datum'].first_valid_index():df['Datum'].isna().argmax()]
 df = df.rename(columns={'Gesamtzahl verabreichter Impfstoffdosen':'Gesamt'})
 df.insert(0, 'Days', range(1, len(df)+1))
+df['cumsum'] = df['Gesamt'].cumsum()
 print(df.tail())
 
 X = sm.add_constant(df['Days'])
