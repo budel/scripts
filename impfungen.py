@@ -25,7 +25,7 @@ if True:
     print(response)
 
 df = pd.ExcelFile(dirData+xlsxf, engine='openpyxl') 
-df = pd.read_excel(df, usecols=['Datum', 'Erstimpfung', 'Zweitimpfung', 'Gesamtzahl verabreichter Impfstoffdosen'], sheet_name='Impfungen_proTag')
+df = pd.read_excel(df, usecols=['Datum', 'Einmal geimpft', 'Vollständig geimpft', 'Gesamtzahl verabreichter Impfstoffdosen'], sheet_name='Impfungen_proTag')
 df = df[df['Datum'].first_valid_index():df['Datum'].isna().argmax()]
 df = df.rename(columns={'Gesamtzahl verabreichter Impfstoffdosen':'Gesamt'})
 df.insert(0, 'Days', range(1, len(df)+1))
@@ -71,10 +71,12 @@ ax.annotate('70%', xy=(dateof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='off
 cumpop = 0
 for i, pop in enumerate(popGroups):
     cumpop += pop
-    txt = f'Gruppe {i+1}'
-    x = df['Datum'][0] + datetime.timedelta(daypop(cumpop*2))
-    y = cumpop*2
-    ax.annotate(txt, xy=(x, y), xytext=(-25, 25), textcoords='offset points', arrowprops=dict(facecolor='black'))
+    for j, xytext in enumerate([(25,-25), (-25,25)]):
+        txt = f'Gruppe ${i+1}' + ('$' if (j+1)==2 else '/2$')
+        y = cumpop*(j+1)
+        x = df['Datum'][0] + datetime.timedelta(daypop(y))
+        print('am', x, 'sind', y, 'Menschen geimpft')
+        ax.annotate(txt, xy=(x, y), xytext=xytext, textcoords='offset points', arrowprops=dict(facecolor='black'))
 
 fig2.savefig(dirData+"tage_pro_impfung.png", bbox_inches = 'tight')
 
