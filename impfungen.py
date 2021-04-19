@@ -70,10 +70,10 @@ ax.annotate('70%', xy=(dateof70p, 0.7*maxpop), xytext=(-15, 25), textcoords='off
 
 cumpop = 0
 for i, pop in enumerate(popGroups):
-    cumpop += pop
     for j, xytext in enumerate([(25,-25), (-25,25)]):
+        cumpop += pop
         txt = f'Gruppe ${i+1}' + ('$' if (j+1)==2 else '/2$')
-        y = cumpop*(j+1)
+        y = cumpop
         x = df['Datum'][0] + datetime.timedelta(daypop(y))
         print('am', x, 'sind', y, 'Menschen geimpft')
         ax.annotate(txt, xy=(x, y), xytext=xytext, textcoords='offset points', arrowprops=dict(facecolor='black'))
