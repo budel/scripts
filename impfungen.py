@@ -27,6 +27,7 @@ if True:
 df = pd.ExcelFile(dirData+xlsxf, engine='openpyxl') 
 df = pd.read_excel(df, usecols=['Datum', 'Gesamtzahl verabreichter Impfstoffdosen'], sheet_name='Impfungen_proTag')
 df = df[df['Datum'].first_valid_index():df['Datum'].isna().argmax()]
+df = df[:-1]
 df = df.rename(columns={'Gesamtzahl verabreichter Impfstoffdosen':'Gesamt'})
 df.insert(0, 'Days', range(1, len(df)+1))
 df['cumsum'] = df['Gesamt'].cumsum()
