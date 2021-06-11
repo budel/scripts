@@ -51,13 +51,13 @@ maxpop = int(2*832e5)
 population = range(1,maxpop,100000) 
 daypop = lambda p : (math.sqrt(2*a*p+b**2)-b) / a
 dayof70p = daypop(0.7*maxpop)
-dateof70p = df['Datum'][0] + datetime.timedelta(dayof70p)
+dateof70p = datetime.datetime.strptime(df['Datum'][0], '%d.%m.%Y') + datetime.timedelta(dayof70p)
 print('noch', dayof70p-len(df), 'Tage bis 70% zweimal geimpft sind')
 print('Also am', dateof70p)
 
 maxdays = int(daypop(maxpop))+1
 cumimpf = [0.5*a*x**2+b*x for x in range(maxdays)] 
-dates = [df['Datum'][0] + datetime.timedelta(i) for i in range(maxdays)]
+dates = [datetime.datetime.strptime(df['Datum'][0], '%d.%m.%Y') + datetime.timedelta(i) for i in range(maxdays)]
 print(dayof70p)
 fig2, ax = plt.subplots()
 ax.plot(dates, cumimpf)
@@ -75,7 +75,7 @@ for i, pop in enumerate(popGroups):
         cumpop += pop
         txt = f'Gruppe ${i+1}' + ('$' if (j+1)==2 else '/2$')
         y = cumpop
-        x = df['Datum'][0] + datetime.timedelta(daypop(y))
+        x = datetime.datetime.strptime(df['Datum'][0], '%d.%m.%Y') + datetime.timedelta(daypop(y))
         print('am', x, 'sind', y, 'Menschen geimpft')
         ax.annotate(txt, xy=(x, y), xytext=xytext, textcoords='offset points', arrowprops=dict(facecolor='black'))
 
