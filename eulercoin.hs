@@ -7,8 +7,9 @@ ec = (map ecH [0 ..] !!)
 ec' n start = (1504170715041707 * n + start) `mod` 4503599627370517
 
 ecsHelp l c i
+  | c < 10 = []
+  | c == 1504170715041707 = []
   | c < l = c:ecsHelp c (ec' 1 c) 1
-  | c < 1000000 = []
   | otherwise = ecsHelp l (ec' (i+1) l) (i+1)
 
 ecs = ecsHelp (ec 1) (ec 2) 1
