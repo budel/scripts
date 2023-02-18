@@ -11,11 +11,13 @@ ecAdd' s
 
 ecR n = (1504170715041707 - (1504170715041707*n)) `mod` 4503599627370517
 
+ecsHelp :: Int -> Int -> [Int]
 ecsHelp l c
   | c < 10 = []
   | c == 1504170715041707 = []
   | c < l = c:ecsHelp c (ecAdd' c)
   | otherwise = ecsHelp l (ecAdd' c)
 
-ecs = ecsHelp (ec 1) (ec 2)
+ecs :: [Int]
+ecs = ecsHelp (ecAdd' 0) (ecAdd' 1)
 
