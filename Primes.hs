@@ -1,5 +1,5 @@
 module Primes
-( primes, divBy, primesOf, divSum )
+( primes, divBy, primesOf, isPrime, divSum )
 where
 
 import qualified Data.IntMap.Strict as IM
@@ -19,6 +19,14 @@ primesOf n = factor n primes
         | p*p > n        = [n]
         | n `mod` p == 0 = p : factor (n `div` p) (p:ps)
         | otherwise      =     factor n ps
+
+isPrime :: Int -> Bool
+isPrime n = f n primes
+  where
+    f n (p:ps)
+      | p*p > n = True
+      | n `mod` p == 0 = False
+      | otherwise = f n ps
 
 divSum :: Int -> Int 
 divSum n = (f n (nub (primesOf n)) 1) - n
