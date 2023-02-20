@@ -18,5 +18,5 @@ ecsHelp l c
   | otherwise = ecsHelp l (ecAdd' c)
 
 ecs :: [Int]
-ecs = ecsHelp (ecAdd' 0) (ecAdd' 1)
+ecs = ecsHelp (ecAdd' 0) (ecAdd' (ecAdd' 0))
 
