@@ -33,7 +33,7 @@ isFlush xs = (length . nub $ xs) == 1
 isStraightFlush cards = isStraight (map rank cards) && isFlush (map suit cards)
 hasFourSame xs = allTheSame (init xs) || allTheSame (tail xs)
 hasTriple xs = allTheSame (take 3 xs) || allTheSame (take 3 (tail xs)) || allTheSame (take 3 (tail (tail xs)))
-hasPair (a:b:c:d:e:_) = a==b || b==c || c==d || d==e
+hasPair (a:b:c:d:e:[]) = (a==b) || (b==c) || (c==d) || (d==e)
 
 
 score :: [Card] -> Score
@@ -46,17 +46,33 @@ score (x:xs)
   | isStraight (map rank (x:xs)) = Straight
   | hasTriple (map rank (x:xs)) = Triple
   | lenUniq (map rank (x:xs)) == 3 = TwoPairs
-  | hasPair (x:xs) = OnePair
+  | hasPair (map rank (x:xs)) = OnePair
   | otherwise = HighCard
+
+getDiffHighCard (c1,c2) = head . dropWhile (\(a,b)->a==b) $ zip (reverse (map rank c1)) (reverse (map rank c2)) 
+hasP1HigherCard xs = fst (getDiffHighCard xs) > snd (getDiffHighCard xs)
+
+pairRank hand = (nub (map rank hand)) \\ (map rank hand)
+hasP1HigherPair (h1, h2) = pairRank h1 > pairRank h2
   
+hasP1Won :: ([Card], [Card]) -> Bool
+hasP1Won (c1, c2) 
+  | score c1 > score c2 = True
+  | score c1 < score c2 = False
+  | score c1 == HighCard = hasP1HigherCard (c1, c2)
+  | score c1 == OnePair = hasP1HigherPair (c1, c2)
 
 main = do
    content <- readFile "poker.txt"
    let linesOfFile = lines content
    let handsStr = map words $ linesOfFile
+   let handsStrSorted = map (\(a,b)-> (sort a,sort b)) . map (splitAt 5) $ handsStr
    let hands = map (splitAt 5) . map (map toCard) $ handsStr
-   let p1scores = map score . map sort . map fst $ hands
-   let p2scores = map score . map sort . map snd $ hands
-   print (zip3 handsStr p1scores p2scores)
+   let handsSorted = map (\(h1, h2) -> (sortBy (\a b->compare (rank a) (rank b)) h1, sortBy (\a b->compare (rank a) (rank b)) h2)) hands
+   let p1Won = map hasP1Won handsSorted
+   --print (take 5 $ zip handsStrSorted handsSorted)
+   print (take 5 $ zip3 handsStrSorted (map (score . fst) handsSorted) (map (score . snd) handsSorted))
+   print (length . filter hasP1Won $ handsSorted)
+
 
 
