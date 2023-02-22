@@ -52,7 +52,7 @@ score (x:xs)
 getDiffHighCard (c1,c2) = head . dropWhile (\(a,b)->a==b) $ zip (reverse (map rank c1)) (reverse (map rank c2)) 
 hasP1HigherCard xs = fst (getDiffHighCard xs) > snd (getDiffHighCard xs)
 
-pairRank hand = (nub (map rank hand)) \\ (map rank hand)
+pairRank hand = (map rank hand) \\ (nub (map rank hand)) 
 hasP1HigherPair (h1, h2) = pairRank h1 > pairRank h2
   
 hasP1Won :: ([Card], [Card]) -> Bool
@@ -71,7 +71,7 @@ main = do
    let handsSorted = map (\(h1, h2) -> (sortBy (\a b->compare (rank a) (rank b)) h1, sortBy (\a b->compare (rank a) (rank b)) h2)) hands
    let p1Won = map hasP1Won handsSorted
    --print (take 5 $ zip handsStrSorted handsSorted)
-   print (take 5 $ zip3 handsStrSorted (map (score . fst) handsSorted) (map (score . snd) handsSorted))
+   print (take 6 $ zip4 handsStrSorted (map (score . fst) handsSorted) (map (score . snd) handsSorted) p1Won)
    print (length . filter hasP1Won $ handsSorted)
 
 
