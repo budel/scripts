@@ -20,7 +20,7 @@ graph2 = Graph $ HM.fromList
   , ("1", [("2", 7), ("3", 4)])
   , ("2", [("4", 2), ("5", 4)])
   , ("3", [("5", 4), ("6", 6)])
-  , ("4", [("7", 8), ("8", 2)])
+  , ("4", [("7", 8), ("8", 5)])
   , ("5", [("8", 5), ("9", 9)])
   , ("6", [("9", 9), ("10", 3)])
   ]
@@ -28,9 +28,6 @@ graph2 = Graph $ HM.fromList
 --  7 4
 -- 2 4 6
 --8 5 9 3
-
-addEdge:: String -> [(String,Int)] -> HM.HashMap String [(String,Int)] -> HM.HashMap String [(String,Int)]
-addEdge node edge = HM.insertWith (++) node edge
 
 sumTo :: [a] -> Int
 sumTo xs = sum [1..((length xs)-1)]
@@ -51,13 +48,14 @@ main = do
 
   content <- readFile "tree.txt"
   let linesOfFile = lines content
-  let treeHead = (read . head $ linesOfFile) :: Int
-  let g = HM.singleton "0" [("1", treeHead)]
-  let g1 = addEdge "1" [("3", 4)] . addEdge "1" [("2", 7)] $ g
-  --HM.insertWith (++) "2" [("4", 2)] g
-  --print (drop 1 linesOfFile)
-  let myTreeList = map words linesOfFile
+  let myTreeList = map (map read) (map words linesOfFile) :: [[Int]]
   print (myTreeList)
-  print (map parentNodes myTreeList)
-  print (map compNodes myTreeList)
-  print g1
+  let nodeDist = map (\xs -> map (:[]) $ zip (compNodes xs) xs) myTreeList
+  let parents = map parentNodes myTreeList
+  let both = zip parents nodeDist
+  let left = map (\(p,d)->zip p d) both
+  let right = map (\(p,d)->zip p (tail d)) both
+  let g1 = HM.unions . map (\(l,r) -> HM.unionWith (++) (HM.fromList l) (HM.fromList r)) $ zip left right
+  let g2 = HM.insert "0" (nodeDist!!0!!0) g1
+  print $ Graph g2
+  print graph2

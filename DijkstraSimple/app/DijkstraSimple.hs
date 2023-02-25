@@ -31,6 +31,7 @@ addDist _ _ = Infinity
 
 newtype Graph = Graph
    { edges :: HashMap String [(String, Int)] }
+   deriving (Show)
 
 data DijkstraState = DijkstraState
   { visitedSet :: HashSet String
