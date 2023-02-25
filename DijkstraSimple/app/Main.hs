@@ -38,24 +38,21 @@ compNodes xs = map show . take (length xs) $ [(sumTo xs)+1..]
 
 main :: IO ()
 main = do
-  print "Example"
-  let shortest = findShortestDistance graph1 "A" "D"
-  print shortest
-  let graph2Inv = invDists graph2
-  let shortest2 = map (findShortestDistance graph2Inv "0") ["7","8","9","10"]
-  print shortest2
-  print (minimum shortest2)
-
+  print "Reading tree.txt"
   content <- readFile "tree.txt"
   let linesOfFile = lines content
   let myTreeList = map (map read) (map words linesOfFile) :: [[Int]]
   print (myTreeList)
+
   let nodeDist = map (\xs -> map (:[]) $ zip (compNodes xs) xs) myTreeList
   let parents = map parentNodes myTreeList
-  let both = zip parents nodeDist
-  let left = map (\(p,d)->zip p d) both
-  let right = map (\(p,d)->zip p (tail d)) both
+  let left = map (\(p,d)->zip p d) $ zip parents nodeDist
+  let right = map (\(p,d)->zip p (tail d)) $ zip parents nodeDist
   let g1 = HM.unions . map (\(l,r) -> HM.unionWith (++) (HM.fromList l) (HM.fromList r)) $ zip left right
-  let g2 = HM.insert "0" (nodeDist!!0!!0) g1
-  print $ Graph g2
-  print graph2
+  let treeGraph = Graph $ HM.insert "0" (nodeDist!!0!!0) g1
+  print treeGraph
+
+  let graph2Inv = invDists treeGraph
+  let shortest = map (findShortestDistance graph2Inv "0") (compNodes (last myTreeList))
+  print shortest
+  print (minimum shortest)
