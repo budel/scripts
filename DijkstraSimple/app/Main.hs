@@ -56,9 +56,8 @@ main = do
   let myWay = zipWith (\step nodes -> if step == fst (head nodes) then head nodes else nodes!!1) (tail bestWay) (map costFunction bestWay)
   print myWay
 
-  print graph2
-  let perms = map dec2bin [0..(2^3-1)]
-  let cstFn node = fromMaybe [] (HM.lookup node graph2)
+  let perms = map dec2bin [0..(2^14-1)]
+  let cstFn node = fromMaybe [] (HM.lookup node treeGraph)
   let start = (cstFn "0")!!0
   let ways = map (scanl (\x y -> (cstFn (fst x)!!y) ) start) perms
   let sums = map (sum . map (\(_,d)->d)) ways
