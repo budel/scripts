@@ -23,26 +23,26 @@ invDists :: HM.HashMap k [(a, Int)] -> HM.HashMap k [(a, Int)]
 invDists = HM.map (map (\(n,d)->(n,d*(-1))))
 
 sumTo :: [a] -> Int
-sumTo xs = sum [1..((length xs)-1)]
+sumTo xs = sum [1..(length xs-1)]
 parentNodes :: [a] -> [String]
-parentNodes xs = map show [sumTo xs - ((length xs)-2) .. sumTo xs]
+parentNodes xs = map show [sumTo xs - (length xs-2) .. sumTo xs]
 compNodes :: [a] -> [String]
-compNodes xs = map show . take (length xs) $ [(sumTo xs)+1..]
+compNodes xs = map show . take (length xs) $ [sumTo xs+1..]
 
 main :: IO ()
 main = do
   print "Reading tree.txt"
   content <- readFile "tree.txt"
   let linesOfFile = lines content
-  let myTreeList = map (map read) (map words linesOfFile) :: [[Int]]
-  print (myTreeList)
+  let myTreeList = map (map read . words) linesOfFile :: [[Int]]
+  print myTreeList
 
-  let nodeDist = map (\xs -> map (:[]) $ zip (compNodes xs) xs) myTreeList
+  let nodeDist = map (\xs -> zipWith (curry (:[])) (compNodes xs) xs) myTreeList
   let parents = map parentNodes myTreeList
-  let left = map (\(p,d)->zip p d) $ zip parents nodeDist
-  let right = map (\(p,d)->zip p (tail d)) $ zip parents nodeDist
-  let g1 = HM.unions . map (\(l,r) -> HM.unionWith (++) (HM.fromList l) (HM.fromList r)) $ zip left right
-  let treeGraph = HM.insert "0" (nodeDist!!0!!0) g1
+  let left = zipWith zip parents nodeDist
+  let right = zipWith (\ p d -> zip p (tail d)) parents nodeDist
+  let g1 = HM.unions (zipWith (\ l r -> HM.unionWith (++) (HM.fromList l) (HM.fromList r)) left right)
+  let treeGraph = HM.insert "0" (head (head nodeDist)) g1
   print treeGraph
 
   let costFunction node = fromMaybe [] (HM.lookup node (invDists treeGraph))
