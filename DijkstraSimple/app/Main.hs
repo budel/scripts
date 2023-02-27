@@ -39,7 +39,7 @@ main = do
   content <- readFile "tree.txt"
   let linesOfFile = lines content
   let myTreeList = map (map read . words) linesOfFile :: [[Int]]
-  print myTreeList
+  --print myTreeList
 
   let nodeDist = map (\xs -> zipWith (curry (:[])) (compNodes xs) xs) myTreeList
   let parents = map parentNodes myTreeList
@@ -47,7 +47,7 @@ main = do
   let right = zipWith (\ p d -> zip p (tail d)) parents nodeDist
   let g1 = HM.unions (zipWith (\ l r -> HM.unionWith (++) (HM.fromList l) (HM.fromList r)) left right)
   let treeGraph = HM.insert "0" (head (head nodeDist)) g1
-  print treeGraph
+  --print treeGraph
 
   let endPoints = compNodes (last myTreeList)
   let costFunction node = fromMaybe [] (HM.lookup node (invDists treeGraph))
@@ -60,13 +60,13 @@ main = do
   let myWay = zipWith (\step nodes -> if step == fst (head nodes) then head nodes else nodes!!1) (tail bestWay) (map costFunction bestWay)
   print myWay
 
-  let depth = length myTreeList-1
-  let perms_ = map dec2bin [0..(2^depth-1)]
-  let perms = map (\xs-> xs ++ replicate (depth-(length xs)) 0 ) perms_
-  let cstFn node = fromMaybe [] (HM.lookup node treeGraph)
-  let start = (cstFn "0")!!0
-  let ways = map (scanl (\x y -> (cstFn (fst x)!!y) ) start) perms
-  let sums = map (sum . map (\(_,d)->d)) ways
-  let best = filter (\w -> (sum (map (\(_,d)->d) w)) == (maximum sums)) ways
-  print $ maximum sums
-  print best
+  --let depth = length myTreeList-1
+  --let perms_ = map dec2bin [0..(2^depth-1)]
+  --let perms = map (\xs-> xs ++ replicate (depth-(length xs)) 0 ) perms_
+  --let cstFn node = fromMaybe [] (HM.lookup node treeGraph)
+  --let start = (cstFn "0")!!0
+  --let ways = map (scanl (\x y -> (cstFn (fst x)!!y) ) start) perms
+  --let sums = map (sum . map (\(_,d)->d)) ways
+  --let best = filter (\w -> (sum (map (\(_,d)->d) w)) == (maximum sums)) ways
+  --print $ maximum sums
+  --print best
