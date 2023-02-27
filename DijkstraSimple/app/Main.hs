@@ -1,7 +1,7 @@
 module Main where
 
 import qualified Data.HashMap.Strict as HM
-import Algorithm.Search (dijkstraAssoc)
+import Algorithm.Search (aStarAssoc)
 import Data.Maybe (fromMaybe)
 import Data.List (unfoldr)
 
@@ -38,7 +38,7 @@ main = do
   print "Reading tree.txt"
   content <- readFile "tree.txt"
   let linesOfFile = lines content
-  let myTreeList = map (map read . words) linesOfFile :: [[Int]]
+  let myTreeList = take 4 $ map (map read . words) linesOfFile :: [[Int]]
   print myTreeList
 
   let nodeDist = map (\xs -> zipWith (curry (:[])) (compNodes xs) xs) myTreeList
@@ -50,13 +50,16 @@ main = do
   print treeGraph
 
   let costFunction node = fromMaybe [] (HM.lookup node (invDists treeGraph))
-  let shortest = minimum $ map (\end -> dijkstraAssoc costFunction (== end) "0") (compNodes (last myTreeList))
+  let r _ = 0
+  let shortest = minimum $ map (\end -> aStarAssoc costFunction r (== end) "0") (compNodes (last myTreeList))
   print shortest
   let bestWay = "0":snd (fromMaybe (0, ["error"]) shortest)
   let myWay = zipWith (\step nodes -> if step == fst (head nodes) then head nodes else nodes!!1) (tail bestWay) (map costFunction bestWay)
   print myWay
 
-  let perms = map dec2bin [0..(2^14-1)]
+  let depth = length myTreeList-1
+  let perms_ = map dec2bin [0..(2^depth-1)]
+  let perms = map (\xs-> xs ++ replicate (depth-(length xs)) 0 ) perms_
   let cstFn node = fromMaybe [] (HM.lookup node treeGraph)
   let start = (cstFn "0")!!0
   let ways = map (scanl (\x y -> (cstFn (fst x)!!y) ) start) perms
