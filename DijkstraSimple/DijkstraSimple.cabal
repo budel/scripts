@@ -66,10 +66,7 @@ executable DijkstraSimple
     -- Other library packages from which modules are imported.
     build-depends:
         base ^>=4.16.4.0,
-        containers,
         unordered-containers,
-        hashable,
-        heap,
         search-algorithms
 
     -- Directories containing source files.
