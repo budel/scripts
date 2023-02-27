@@ -38,7 +38,7 @@ main = do
   print "Reading tree.txt"
   content <- readFile "tree.txt"
   let linesOfFile = lines content
-  let myTreeList = take 4 $ map (map read . words) linesOfFile :: [[Int]]
+  let myTreeList = map (map read . words) linesOfFile :: [[Int]]
   print myTreeList
 
   let nodeDist = map (\xs -> zipWith (curry (:[])) (compNodes xs) xs) myTreeList
@@ -49,9 +49,12 @@ main = do
   let treeGraph = HM.insert "0" (head (head nodeDist)) g1
   print treeGraph
 
+  let endPoints = compNodes (last myTreeList)
   let costFunction node = fromMaybe [] (HM.lookup node (invDists treeGraph))
-  let r _ = 0
-  let shortest = minimum $ map (\end -> aStarAssoc costFunction r (== end) "0") (compNodes (last myTreeList))
+  let estDistH = unfoldr (\n -> if (any (==n) endPoints) then Nothing else Just(fstNext n, fstNext n)) where fstNext n = fst . head . fromMaybe [] . HM.lookup n $ treeGraph
+  let estDist n = (-100) * (length $ estDistH n)
+
+  let shortest = minimum $ map (\end -> aStarAssoc costFunction estDist (== end) "0") endPoints
   print shortest
   let bestWay = "0":snd (fromMaybe (0, ["error"]) shortest)
   let myWay = zipWith (\step nodes -> if step == fst (head nodes) then head nodes else nodes!!1) (tail bestWay) (map costFunction bestWay)
