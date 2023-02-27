@@ -1,21 +1,11 @@
 module Main where
 
 import qualified Data.HashMap.Strict as HM
-import DijkstraSimple
+import Algorithm.Search (dijkstraAssoc)
+import Data.Maybe (fromMaybe)
 
-invDists :: Graph -> Graph
-invDists graph = Graph $ (HM.map (map (\(n,d)->(n,d*(-1)))) $ (edges graph))
-
-graph1 :: Graph
-graph1 = Graph $ HM.fromList
-  [ ("A", [("D", 100), ("B", 1), ("C", 20)])
-  , ("B", [("D", 50)])
-  , ("C", [("D", 20)])
-  , ("D", [])
-  ]
-
-graph2 :: Graph
-graph2 = Graph $ HM.fromList
+graph2 :: HM.HashMap String [(String, Int)]
+graph2 = HM.fromList
   [ ("0", [("1", 3)])
   , ("1", [("2", 7), ("3", 4)])
   , ("2", [("4", 2), ("5", 4)])
@@ -28,6 +18,9 @@ graph2 = Graph $ HM.fromList
 --  7 4
 -- 2 4 6
 --8 5 9 3
+
+invDists :: HM.HashMap k [(a, Int)] -> HM.HashMap k [(a, Int)]
+invDists = HM.map (map (\(n,d)->(n,d*(-1))))
 
 sumTo :: [a] -> Int
 sumTo xs = sum [1..((length xs)-1)]
@@ -49,10 +42,12 @@ main = do
   let left = map (\(p,d)->zip p d) $ zip parents nodeDist
   let right = map (\(p,d)->zip p (tail d)) $ zip parents nodeDist
   let g1 = HM.unions . map (\(l,r) -> HM.unionWith (++) (HM.fromList l) (HM.fromList r)) $ zip left right
-  let treeGraph = Graph $ HM.insert "0" (nodeDist!!0!!0) g1
+  let treeGraph = HM.insert "0" (nodeDist!!0!!0) g1
   print treeGraph
 
-  let graph2Inv = invDists treeGraph
-  let shortest = map (findShortestDistance graph2Inv "0") (compNodes (last myTreeList))
+  let costFunction node = fromMaybe [] (HM.lookup node (invDists treeGraph))
+  let shortest = minimum $ map (\end -> dijkstraAssoc costFunction (== end) "0") (compNodes (last myTreeList))
   print shortest
-  print (minimum shortest)
+  let bestWay = "0":snd (fromMaybe (0, ["error"]) shortest)
+  let myWay = zipWith (\step nodes -> if step == fst (head nodes) then head nodes else nodes!!1) (tail bestWay) (map costFunction bestWay)
+  print myWay

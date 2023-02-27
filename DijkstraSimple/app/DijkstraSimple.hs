@@ -14,13 +14,17 @@ import Data.Hashable (Hashable)
 import Data.Maybe (fromMaybe)
 
 data Distance a = Dist a | Infinity
-  deriving (Show, Eq)
+  deriving (Eq)
 
 instance (Ord a) => Ord (Distance a) where
   Infinity <= Infinity = True
   Infinity <= Dist _ = False
   Dist _ <= Infinity = True
   Dist x <= Dist y = x <= y
+
+instance (Show a) => Show (Distance a) where
+  show Infinity = show "Inf"
+  show (Dist a) = show a
 
 addDist :: (Num a) => Distance a -> Distance a -> Distance a
 addDist (Dist x) (Dist y) = Dist (x + y)
