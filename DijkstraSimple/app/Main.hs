@@ -3,6 +3,7 @@ module Main where
 import qualified Data.HashMap.Strict as HM
 import Algorithm.Search (dijkstraAssoc)
 import Data.Maybe (fromMaybe)
+import Data.List (permutations, nub)
 
 graph2 :: HM.HashMap String [(String, Int)]
 graph2 = HM.fromList
@@ -51,3 +52,13 @@ main = do
   let bestWay = "0":snd (fromMaybe (0, ["error"]) shortest)
   let myWay = zipWith (\step nodes -> if step == fst (head nodes) then head nodes else nodes!!1) (tail bestWay) (map costFunction bestWay)
   print myWay
+
+  print graph2
+  let perms = [[0,0,0]] ++ nub (permutations [0,0,1]) ++ nub (permutations [0,1,1]) ++ [[1,1,1]]
+  let cstFn node = fromMaybe [] (HM.lookup node graph2)
+  let start = (cstFn "0")!!0
+  let ways = map (scanl (\x y -> (cstFn (fst x)!!y) ) start) perms
+  let sums = map (sum . map (\(_,d)->d)) ways
+  let best = filter (\w -> (sum (map (\(_,d)->d) w)) == (maximum sums)) ways
+  print $ maximum sums
+  print best
