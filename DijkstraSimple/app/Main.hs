@@ -3,7 +3,7 @@ module Main where
 import qualified Data.HashMap.Strict as HM
 import Algorithm.Search (dijkstraAssoc)
 import Data.Maybe (fromMaybe)
-import Data.List (permutations, nub)
+import Data.List (unfoldr)
 
 graph2 :: HM.HashMap String [(String, Int)]
 graph2 = HM.fromList
@@ -30,6 +30,9 @@ parentNodes xs = map show [sumTo xs - (length xs-2) .. sumTo xs]
 compNodes :: [a] -> [String]
 compNodes xs = map show . take (length xs) $ [sumTo xs+1..]
 
+dec2bin :: Int -> [Int]
+dec2bin = unfoldr (\x -> if x==0 then Nothing else Just(rem x 2, div x 2))
+
 main :: IO ()
 main = do
   print "Reading tree.txt"
@@ -54,7 +57,7 @@ main = do
   print myWay
 
   print graph2
-  let perms = [[0,0,0]] ++ nub (permutations [0,0,1]) ++ nub (permutations [0,1,1]) ++ [[1,1,1]]
+  let perms = map dec2bin [0..(2^3-1)]
   let cstFn node = fromMaybe [] (HM.lookup node graph2)
   let start = (cstFn "0")!!0
   let ways = map (scanl (\x y -> (cstFn (fst x)!!y) ) start) perms
