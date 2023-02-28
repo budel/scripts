@@ -34,6 +34,6 @@ executable x816
 
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
-    build-depends:    base ^>=4.16.4.0, mod^>=0.1.2.2
+    build-depends:    base ^>=4.16.4.0, mod^>=0.1.2.2, containers
     hs-source-dirs:   app
     default-language: Haskell2010
