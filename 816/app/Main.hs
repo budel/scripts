@@ -3,6 +3,10 @@ import Data.Mod.Word
 import qualified Data.Set as DS
 
 type Mod5 = Mod 50515093
+--primesOf 50515093
+--[5807,8699]
+--ghci> primesOf 290797
+--[13,22369]
 
 s0Inv :: Maybe Mod5
 s0Inv = invertMod (290707 :: Mod5)
@@ -32,6 +36,9 @@ main :: IO ()
 main = do
     --let ps = map p [0..2000000]
     --print $ length . DS.fromList $ map sns [0..20000]
+    let qRes1 = DS.size . DS.fromList $ map (\n->(n*n)::Mod 5807) [1..5806]
+        qRes2 = DS.size . DS.fromList $ map (\n->(n*n)::Mod 8699) [1..8698]
+    print (qRes1 * qRes2)
     let ps = map p [0..13]
     let psSet = DS.fromList ps
     let combs = DS.filter (\x->length x==2) . DS.powerSet $ psSet
