@@ -8,6 +8,14 @@ type Mod5 = Mod 50515093
 --ghci> primesOf 290797
 --[13,22369]
 
+-- n*n===290797 (Mod5)
+--
+--If n is not congruent to 2 modulo 4 and the Kronecker symbol =-1 then there is no solution
+--
+--290797^((5807-1)`div`2) `mod` 5807 == 1
+--290797^((8699-1)`div`2) `mod` 8699 == 8698 === -1 (Mod 8699)
+--so the Kronecker Symbol is -1, hence no solution exists
+
 s0Inv :: Maybe Mod5
 s0Inv = invertMod (290707 :: Mod5)
 
