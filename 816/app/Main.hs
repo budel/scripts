@@ -9,7 +9,8 @@ s0Inv = invertMod (290707 :: Mod5)
 
 sns :: Int -> Mod5
 sns = (map f [0..] !!)
-  where f 0 = 290797 :: Mod5
+  where f :: Int -> Mod5
+        f 0 = 290797 :: Mod5
         f n = (f (n-1) * f (n-1)) :: Mod5
 
 p :: Int -> (Mod5, Mod5)
@@ -30,11 +31,12 @@ distOf2 xs = dist (DS.elemAt 0 xs) (DS.elemAt 1 xs)
 main :: IO ()
 main = do
     --let ps = map p [0..2000000]
+    --print $ length . DS.fromList $ map sns [0..20000]
     let ps = map p [0..13]
     let psSet = DS.fromList ps
     let combs = DS.filter (\x->length x==2) . DS.powerSet $ psSet
     let min1 = minimum . map euclDistOf2 $ DS.toList combs
-    print min1
+    print (min1::Double)
     let best = DS.elemAt 0 $ DS.filter (\s->euclDistOf2 s == min1) combs
     print best
     print s0Inv
